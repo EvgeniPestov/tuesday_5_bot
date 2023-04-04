@@ -1,6 +1,7 @@
 import requests as r
 import geopy
 import os
+import sqlite3
 from datetime import datetime
 
 
@@ -41,3 +42,21 @@ def get_forecast(lat, lon):
     }
     resp = r.get(url, params=params).json()
     return resp
+
+
+
+def connect_db():
+    con = sqlite3.connect('identifier.sqlite')
+    return con
+
+def add_user(f_name,l_name, tg_id, phone, connection):
+    sql = f''' INSERT INTO users (first_name, last_name, tg_id, phone_number)
+               VALUE ({f_name}, {l_name}, {tg_id}, {phone})'''
+    try:
+        cursor = connection.cursor()
+        curs.execute(sql)
+
+        return 0
+
+    except:
+        return None
