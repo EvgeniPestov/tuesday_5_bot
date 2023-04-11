@@ -36,6 +36,14 @@ def button_message(message):
 @bot.message_handler(content_types=['contact', 'location'])
 def save_user(message):
     if message.contact is not None:  # если номер телефона передали
+        connect = connect_db()
+        cont = message.contact
+        u = add_user(cont.first_name, cont.last_name, cont.user_id, cont.phone_message, connect)
+        if u is not None:
+            bot.send_message(message.chat.id, 'Спасибо!')
+        else:
+            bot.send_message(message.chat.id, ' Вы уже отправляли мне контакт!')
+
         with open('users.txt', 'a', encoding='utf-8') as file:  # записываем инфу о пользователе в файл
             file.write(f'{message.contact}\n')
     elif message.location is not None:  # если локацию передали
@@ -43,7 +51,7 @@ def save_user(message):
         lon = message.location.longitude
         city = get_city(lat, lon)
         forecast = get_forecast(lat, lon)
-        bot.send_message(message.chat.id, str(city))
+        bot.send_message(message.chat.id, text=forecast, params_mode='html')
 
 
 @bot.message_handler(content_types=['text'])  # эта функция обрабатывает текст
